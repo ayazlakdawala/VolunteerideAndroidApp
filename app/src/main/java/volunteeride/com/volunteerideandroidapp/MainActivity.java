@@ -11,6 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import org.springframework.http.HttpAuthentication;
+import org.springframework.http.HttpBasicAuthentication;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -18,13 +23,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
-import volunteeride.com.volunteerideandroidapp.dto.Center;
+import volunteeride.com.volunteerideandroidapp.dto.PagedResponse;
+import volunteeride.com.volunteerideandroidapp.dto.Ride;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button bttnRetrieveCenters;
-    private ListView lstCenters;
-    List<Center> centersList;
+    private ListView lstViewRides;
+    List<Ride> rides;
 
 
     @Override
@@ -34,23 +40,22 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        bttnRetrieveCenters = (Button)findViewById(R.id.bttnRtrvCenters);
-        lstCenters = (ListView)findViewById(R.id.lstCenters);
+        bttnRetrieveCenters = (Button)findViewById(R.id.bttnRtrvRides);
+        lstViewRides = (ListView)findViewById(R.id.lstViewRides);
 
         bttnRetrieveCenters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                ArrayAdapter<Center> centerArrayAdapter =
-                        new ArrayAdapter<Center>(MainActivity.this, R.layout.list_item, centersList);
-                lstCenters.setAdapter(centerArrayAdapter);
+                ArrayAdapter<Ride> centerArrayAdapter =
+                        new ArrayAdapter<>(MainActivity.this, R.layout.list_item, rides);
+                lstViewRides.setAdapter(centerArrayAdapter);
 
             }
         });
 
-        DownloadCentersData downloadCentersData = new DownloadCentersData();
-        downloadCentersData.execute();
+        DownloadRidesData downloadRidesData = new DownloadRidesData();
+        downloadRidesData.execute();
 
     }
 
@@ -76,26 +81,37 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DownloadCentersData extends AsyncTask<String, Void, List<Center>>{
+    private class DownloadRidesData extends AsyncTask<String, Void, List<Ride>>{
 
         @Override
-        protected List<Center> doInBackground(String... params) {
+        protected List<Ride> doInBackground(String... params) {
+
+            HttpAuthentication authHeader = new HttpBasicAuthentication("rideusr", "password");
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.setAuthorization(authHeader);
+            HttpEntity<?> requestEntity = new HttpEntity<Object>(requestHeaders);
 
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-            ResponseEntity<Center[]> result =  restTemplate.getForEntity("http://10.0.2.2:8080/volunteeride/centers", Center[].class);
+            String URL = "http://10.0.2.2:8080/volunteeride/centers/564798040364519acbc255b1/rides";
 
-            centersList = Arrays.asList(result.getBody());
+           // ResponseEntity<Center[]> result =  restTemplate.getForEntity("http://10.0.2.2:8080/volunteeride/centers", Center[].class);
 
-            return centersList;
+
+            ResponseEntity<PagedResponse> response = null;
+            try {
+                response = restTemplate.exchange(URL, HttpMethod.GET, requestEntity, PagedResponse.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            PagedResponse result = response.getBody();
+
+            rides = Arrays.asList((Ride[])result.getContent());
+
+           return rides;
         }
 
-        @Override
-        protected void onPostExecute(List<Center> centers) {
-            super.onPostExecute(centers);
-
-
-        }
     }
 }

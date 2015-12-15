@@ -1,22 +1,23 @@
 package volunteeride.com.volunteerideandroidapp.dto;
 
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import org.joda.time.DateTime;
+
+import volunteeride.com.volunteerideandroidapp.jackson.CustomDateDeserializer;
 
 /**
  * Created by ayazlakdawala on 12/13/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BaseDTOObject {
 
     protected String id;
 
-
-    /**
-     * This field is inserted with current date time in database using CreatedDate annotation.
-     * This field will be ignored during deserialization and rendered during serialization.
-     * See the Json annotations on this property, its getters and setters for more details.
-     */
-    protected Date createdDatetime;
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    protected DateTime createdDatetime;
 
     protected Long version;
 
@@ -36,11 +37,11 @@ public class BaseDTOObject {
         this.version = version;
     }
 
-    public Date getCreatedDatetime() {
+    public DateTime getCreatedDatetime() {
         return createdDatetime;
     }
 
-    public void setCreatedDatetime(Date createdDatetime) {
+    public void setCreatedDatetime(DateTime createdDatetime) {
         this.createdDatetime = createdDatetime;
     }
 }

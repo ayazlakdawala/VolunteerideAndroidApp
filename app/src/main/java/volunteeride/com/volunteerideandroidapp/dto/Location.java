@@ -1,8 +1,11 @@
 package volunteeride.com.volunteerideandroidapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by ayazlakdawala on 12/13/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Location {
 
     private String city;

@@ -1,12 +1,14 @@
 package volunteeride.com.volunteerideandroidapp.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
 /**
  * Created by ayazlakdawala on 12/13/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Center extends BaseDTOObject{
 
     private String name;
