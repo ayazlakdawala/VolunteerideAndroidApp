@@ -6,13 +6,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 import volunteeride.com.volunteerideandroidapp.jackson.CustomDateDeserializer;
 
 /**
  * Created by ayazlakdawala on 12/13/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BaseDTOObject {
+public class BaseDTOObject  implements Serializable {
 
     protected String id;
 

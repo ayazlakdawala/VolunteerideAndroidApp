@@ -2,11 +2,13 @@ package volunteeride.com.volunteerideandroidapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
+
 /**
  * Created by ayazlakdawala on 12/13/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Location {
+public class Location  implements Serializable {
 
     private String city;
     private String state;

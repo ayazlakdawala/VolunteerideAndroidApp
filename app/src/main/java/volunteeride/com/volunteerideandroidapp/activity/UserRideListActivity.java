@@ -2,6 +2,7 @@ package volunteeride.com.volunteerideandroidapp.activity;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,10 +30,8 @@ import volunteeride.com.volunteerideandroidapp.dto.Ride;
 public class UserRideListActivity extends ListActivity {
 
     private Button bttnRetrieveCenters;
-    private ListView lstViewRides;
     List<Ride> rides;
     public static final String VOLUNTEERIDE_PREFERENCES = "VolRidePrefs" ;
-
     SharedPreferences sharedpreferences;
 
 
@@ -51,17 +50,11 @@ public class UserRideListActivity extends ListActivity {
 //        editor.commit();
 
         bttnRetrieveCenters = (Button)findViewById(R.id.bttnRtrvRides);
-        lstViewRides = (ListView)findViewById(android.R.id.list);
 
         bttnRetrieveCenters.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                RideAdapter rideArrayAdapter =
-                        new RideAdapter(UserRideListActivity.this, rides);
-                lstViewRides.setAdapter(rideArrayAdapter);
-
-
+                setListAdapter(new RideAdapter(UserRideListActivity.this, rides));
             }
         });
 
@@ -70,6 +63,13 @@ public class UserRideListActivity extends ListActivity {
 
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Ride clickedRide = (Ride) getListAdapter().getItem(position);
+        Intent intent = new Intent(v.getContext(), RideDetailsViewActivity.class);
+        intent.putExtra("clickedRide", clickedRide);
+        startActivity(intent);
+    }
 
 
     private class DownloadRidesData extends AsyncTask<String, Void, List<Ride>>{
